@@ -1,0 +1,30 @@
+{
+  "name": "reacticoncomponent",
+  "version": "1.0.0",
+  "description": "react component icons",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "svg-ts-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --typescript --out-dir dist -- src/assets",
+    "svg-js-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --out-dir dist -- src/assets",
+    "svg-build": "npm-run-all svg-ts-build svg-js-build"
+  },
+  "author": "Mrunal Patel",
+  "license": "ISC",
+  "devDependencies": {
+    "@svgr/cli": "^8.1.0",
+    "@svgr/webpack": "^8.1.0",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "node-fetch": "^3.3.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
