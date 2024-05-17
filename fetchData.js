@@ -33,7 +33,7 @@ import('node-fetch').then(async (fetchModule) => {
         console.log('Fetching Icons');
         try {
             for (const project of projects) {
-                const response = await fetch(`http://172.16.1.169:8080/api/project/${project.projectId}/icons?page=0&perPage=10`, {
+                const response = await fetch(`http://172.16.1.169:8080/api/project/${project.projectId}/icons?page=0&perPage=100000`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -51,7 +51,8 @@ import('node-fetch').then(async (fetchModule) => {
                             for (const image of icon.iconImages) {
                                 const svgData = await fetchSVGData(image.iconImagePath);
                                 const outputPath = path.resolve(__dirname, 'src/assets', image.uniqueImageName);
-                                fs.writeFileSync(outputPath, svgData); // Write SVG data to file
+                                // Write SVG data to file
+                                fs.writeFileSync(outputPath, svgData);
                             }
                         }
                     });
@@ -66,20 +67,24 @@ import('node-fetch').then(async (fetchModule) => {
     async function fetchSVGData(url) {
         console.log('fetching svg Data');
         try {
-            const fullUrl = `http://172.16.1.169:8080/${url}`; // Construct full URL
+            // Construct full URL
+            const fullUrl = `http://172.16.1.169:8080/${url}`;
             const response = await fetch(fullUrl);
-            const svgData = await response.text(); // Convert response to text
-            console.log(svgData);
+            // Convert response to text
+            const svgData = await response.text();
+            console.log('fetched SVGs');
             return svgData;
         } catch (error) {
             console.error('Error fetching SVG data:', error);
-            return ''; // Return empty string on error
+            // Return empty string on error
+            return '';
         }
     }
 
 
     // Fetch projects and fetch SVGs for each project
     async function fetchAndWriteSVGsForAllProjects() {
+        console.log('writing SVGs');
         const projects = await fetchProjects();
         await fetchAndWriteSVGs(projects);
     }
