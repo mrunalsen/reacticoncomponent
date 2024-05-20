@@ -4,6 +4,7 @@
   "description": "react component icons",
   "main": "index.js",
   "scripts": {
+    "fetchData": "node fetchData",
     "build": "webpack",
     "svg-ts-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --typescript --out-dir dist -- src/assets",
     "svg-js-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --out-dir dist -- src/assets",

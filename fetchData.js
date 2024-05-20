@@ -3,6 +3,11 @@ console.log('Script started.');
 const path = require('path');
 const fs = require('fs');
 
+// Icons page index
+const page = 0;
+// Icons per page
+const perPage = 10000;
+
 import('node-fetch').then(async (fetchModule) => {
     console.log('Starting to fetch......');
     const fetch = fetchModule.default;
@@ -11,6 +16,7 @@ import('node-fetch').then(async (fetchModule) => {
     async function fetchProjects() {
         console.log('Fetching Projects');
         try {
+            // PROJECTS fetch API
             const response = await fetch('http://172.16.1.169:8080/api/project/search?Page=0&PerPage=50&sort=-projectId', {
                 method: 'POST',
                 headers: {
@@ -27,13 +33,17 @@ import('node-fetch').then(async (fetchModule) => {
             return [];
         }
     }
-
+    // Function to sanitize file names
+    function sanitizeFileName(name) {
+        return name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    }
     // Function to fetch SVGs for multiple projects
     async function fetchAndWriteSVGs(projects) {
         console.log('Fetching Icons');
         try {
+            // ICONS project wise API
             for (const project of projects) {
-                const response = await fetch(`http://172.16.1.169:8080/api/project/${project.projectId}/icons?page=0&perPage=100000`, {
+                const response = await fetch(`http://172.16.1.169:8080/api/project/${project.projectId}/icons?page=${page}&perPage=${perPage}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -45,17 +55,37 @@ import('node-fetch').then(async (fetchModule) => {
 
                 const iconData = await response.json();
                 console.log('icon Data : ', iconData);
+                // if (iconData && iconData.result && iconData.result.icons) {
+                //     iconData.result.icons.forEach(async icon => {
+                //         if (icon.iconImages && icon.iconImages.length > 0) {
+                //             for (const image of icon.iconImages) {
+                //                 const svgData = await fetchSVGData(image.iconImagePath);
+                //                 const outputPath = path.resolve(__dirname, 'src/assets', image.imageName);
+                //                 // Write SVG data to file
+                //                 fs.writeFileSync(outputPath, svgData);
+                //             }
+                //         }
+                //     });
+                // }
                 if (iconData && iconData.result && iconData.result.icons) {
-                    iconData.result.icons.forEach(async icon => {
+                    const projectDir = path.resolve(__dirname, 'src/assets', project.projectName);
+                    if (!fs.existsSync(projectDir)) {
+                        fs.mkdirSync(projectDir, { recursive: true });
+                    }
+
+                    for (const icon of iconData.result.icons) {
                         if (icon.iconImages && icon.iconImages.length > 0) {
                             for (const image of icon.iconImages) {
-                                const svgData = await fetchSVGData(image.iconImagePath);
-                                const outputPath = path.resolve(__dirname, 'src/assets', image.uniqueImageName);
-                                // Write SVG data to file
-                                fs.writeFileSync(outputPath, svgData);
+                                if (path.extname(image.iconImagePath).toLowerCase() === '.svg') {
+                                    const svgData = await fetchSVGData(image.iconImagePath);
+                                    const sanitizedIconName = sanitizeFileName(icon.iconName);
+                                    const outputPath = path.resolve(projectDir, `${sanitizedIconName}.svg`);
+                                    // Write SVG data to file
+                                    fs.writeFileSync(outputPath, svgData);
+                                }
                             }
                         }
-                    });
+                    }
                 }
             }
         } catch (error) {
