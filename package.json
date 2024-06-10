@@ -6,9 +6,9 @@
   "scripts": {
     "fetchData": "node fetchData",
     "build": "webpack",
-    "svg-ts-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --typescript --out-dir dist -- src/assets",
     "svg-js-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --out-dir dist -- src/assets",
-    "svg-build": "npm-run-all svg-ts-build svg-js-build"
+    "svg-ts-build": "svgr --icon 1rem --svg-props color=black --replace-attr-values #1D1D1D=currentColor --typescript --out-dir dist -- src/assets",
+    "svg-build": "npm-run-all fetchData svg-ts-build"
   },
   "author": "Mrunal Patel",
   "license": "ISC",
